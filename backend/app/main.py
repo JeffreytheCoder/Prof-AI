@@ -20,8 +20,6 @@ from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.prompts import PromptTemplate
 from langchain.llms import Cohere
 from langchain.embeddings import CohereEmbeddings
-os.environ["GOOGLE_CSE_ID"] = os.getenv("GOOGLE_CSE_ID")
-os.environ["GOOGLE_API_KEY"] = os.getenv("COHERE_API_KEY")
 
 load_dotenv()
 app = FastAPI()
