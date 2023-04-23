@@ -11,9 +11,9 @@ const initialState = {
 
 const BotContext = createContext({
   ...initialState,
-  uploadFile: () => Boolean,
-  getSlides: () => null,
-  getTranscripts: () => null,
+  uploadFile: () => Promise.resolve(),
+  getSlides: () => Promise.resolve(),
+  getTranscripts: () => Promise.resolve(),
 });
 
 export const BotProvider = (props) => {
@@ -28,7 +28,7 @@ export const BotProvider = (props) => {
     const formData = new FormData();
     formData.append('file', inputFile);
 
-    const res = await fetch(`${ROOT_URL}/slides`, {
+    const res = await fetch(`${ROOT_URL}/uploadfile`, {
       method: 'POST',
       body: formData,
     });
@@ -54,6 +54,8 @@ export const BotProvider = (props) => {
 
     const blob = await res.blob();
     setSlides(blob);
+
+    return blob
   };
 
   const getTranscripts = async () => {
@@ -67,6 +69,8 @@ export const BotProvider = (props) => {
 
     const json = await res.json();
     setTranscripts(json.content);
+
+    return json.content
   };
 
   return (

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import { Button, IconButton } from "@mui/material";
-import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded } from '@mui/icons-material';
+import {Button, IconButton, Container, Grid} from "@mui/material";
+import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded }from '@mui/icons-material';
 import Videos from "./Videos";
 import "../App.css"
 
@@ -42,42 +42,49 @@ const Slides = () => {
   ];
 
   return (
-    <div className="App" align="center">
-      <Document
-        file="/test.pdf"
-        onLoadSuccess={onDocumentLoadSuccess}>
-        {isLoading && renderedPageNumber ? (
-          <Page
-            key={renderedPageNumber}
-            pageNumber={renderedPageNumber}
-          />
-        ) : null}
+      <Container maxWidth="xl">
+        <Grid container spacing={1}>
+          <Grid item xs={8}>
+            <div className="App" align="center" >
+              <Document
+                  file="/test.pdf"
+                  onLoadSuccess={onDocumentLoadSuccess}>
+                {isLoading && renderedPageNumber ? (
+                    <Page
+                        key={renderedPageNumber}
+                        pageNumber={renderedPageNumber}
+                    />
+                ) : null}
 
-        <Page
-          className={`${isLoading ? 'loadingPage' : ''}`}
-          key={pageNumber}
-          pageNumber={pageNumber}
-          onRenderSuccess={() => setRenderedPageNumber(pageNumber)}
-        />
-        <p>
-          Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-        </p>
-        <IconButton size="large" color="inherit"
-          disabled={pageNumber <= 1} onClick={() => {
-            previousPage();
-          }}>
-          <KeyboardArrowLeftRounded />
-        </IconButton>
-        <IconButton size="large" color="inherit"
-          disabled={numPages ? pageNumber >= numPages : true}
-          onClick={nextPage}
-        >
-          <KeyboardArrowRightRounded />
-        </IconButton>
-      </Document>
-
-      <Videos transcripts={transcripts} pageNum={pageNumber-1} nextPage={nextPage} />
-    </div>
+                <Page
+                    className={`${isLoading ? 'loadingPage' : ''}`}
+                    key={pageNumber}
+                    pageNumber={pageNumber}
+                    onRenderSuccess={() => setRenderedPageNumber(pageNumber)}
+                />
+                <p>
+                  Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+                </p>
+                <IconButton size="large" style={{color:"#5F64FA"}}
+                            disabled={pageNumber <= 1} onClick={() => {
+                  previousPage();
+                }}>
+                  <KeyboardArrowLeftRounded fontSize='large'/>
+                </IconButton>
+                <IconButton size="large"  style={{color:"#5F64FA"}}
+                            disabled={numPages ? pageNumber >= numPages : true}
+                            onClick={nextPage}
+                >
+                  <KeyboardArrowRightRounded fontSize='large'/>
+                </IconButton>
+              </Document>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            <Videos transcripts={transcripts} pageNum={pageNumber-1} nextPage={nextPage} />
+          </Grid>
+        </Grid>
+      </Container>
   );
 };
 
