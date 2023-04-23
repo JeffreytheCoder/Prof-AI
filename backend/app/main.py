@@ -54,7 +54,7 @@ if not api_key:
 # loader = UnstructuredFileLoader("./input-docs/2.7.1.txt")
 # documents = loader.load()
 persist_directory = 'db'
-slide_file_name = ""
+slide_hash = ""
 saved_slides= ""
 # Documents
 # file_name = ""
@@ -152,14 +152,15 @@ async def generate_response():
     global saved_slides 
     saved_slides = slides
 
+    global slide_hash
+    slide_hash = convert_md(slides)
+    
     created_time = int(time.time())
     response_data = {
         "created": created_time,
         "model": "prof-ai-v1",
-        "content": slides
+        "content": slide_hash
     }
-    global slide_file_name
-    slide_file_name = convert_md(slides)
 
     return JSONResponse(content=response_data)
 
@@ -284,11 +285,11 @@ def convert_md(file_string):
     replaced_file_string = replace_image_with_url(get_images_by_keywords(find_image_keywords(file_string)), file_string)
     hash = random.getrandbits(128)
     print("hash value: %032x" % hash)
-    f = open(f"./slides/{hash}.md", "w")
+    f = open(f"../frontend/public/{hash}.md", "w")
     f.write(replaced_file_string)
     f.close()
-    subprocess.run(["marp", f"./slides/{hash}.md", "-o", f"./slides/{hash}.pdf"])
-    return f"./slides/{hash}.pdf"
+    subprocess.run(["marp", f"../frontend/public/{hash}.md", "-o", f"../frontend/public/{hash}.pdf"])
+    return str(hash)
 
 def replace_image_with_url(res, file_string):
     for key in res:

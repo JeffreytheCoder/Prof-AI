@@ -6,16 +6,19 @@ import {Button, IconButton, Container, Grid} from "@mui/material";
 import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded }from '@mui/icons-material';
 import Videos from "./Videos";
 import "../App.css"
-
+import useBot from '../hooks/useBot';
 
 const Slides = () => {
-  useEffect(() => {
-    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-  });
-
+  const {slides, transcripts} = useBot();
+  console.log(slides)
+  
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [renderedPageNumber, setRenderedPageNumber] = useState(null);
+
+  useEffect(() => {
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+  });
 
   const isLoading = renderedPageNumber !== pageNumber;
 
@@ -37,37 +40,38 @@ const Slides = () => {
     changePage(1);
   }
 
-  const transcripts = [
-    'I am talking about the first slide right now',
-    'I am talking about the second slide right now',
-    'I am talking about the third slide right now'
-  ];
+  // const transcripts = [
+  //   'I am talking about the first slide right now',
+  //   'I am talking about the second slide right now',
+  //   'I am talking about the third slide right now'
+  // ];
 
   return (
       <Container maxWidth="xl">
         <Grid container spacing={1}>
           <Grid item xs={8}>
             <div className="App" align="center" >
-              <Document
-                  file="/test.pdf"
-                  onLoadSuccess={onDocumentLoadSuccess}>
-                {isLoading && renderedPageNumber ? (
-                    <Page
-                        key={renderedPageNumber}
-                        pageNumber={renderedPageNumber}
-                    />
-                ) : null}
-
+            { slides && (
+          <Document
+            file={"/"+slides+".pdf"}
+            onLoadSuccess={onDocumentLoadSuccess}>
+            {isLoading && renderedPageNumber ? (
                 <Page
-                    className={`${isLoading ? 'loadingPage' : ''}`}
-                    key={pageNumber}
-                    pageNumber={pageNumber}
-                    onRenderSuccess={() => setRenderedPageNumber(pageNumber)}
+                    key={renderedPageNumber}
+                    pageNumber={renderedPageNumber}
                 />
-                <p>
-                  Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-                </p>
-                <IconButton size="large" style={{color:"#5F64FA"}}
+            ) : null}
+
+            <Page
+                className={`${isLoading ? 'loadingPage' : ''}`}
+                key={pageNumber}
+                pageNumber={pageNumber}
+                onRenderSuccess={() => setRenderedPageNumber(pageNumber)}
+            />
+              <p>
+                Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+              </p>
+              <IconButton size="large" style={{color:"#5F64FA"}}
                             disabled={pageNumber <= 1} onClick={() => {
                   previousPage();
                 }}>
@@ -79,7 +83,7 @@ const Slides = () => {
                 >
                   <KeyboardArrowRightRounded fontSize='large'/>
                 </IconButton>
-              </Document>
+          </Document>)}
             </div>
           </Grid>
           <Grid item xs={4}>
