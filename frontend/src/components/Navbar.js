@@ -6,6 +6,11 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Face6RoundedIcon from '@mui/icons-material/Face6Rounded';
 import logo from '../logo.png'
+import {Link} from 'react-router-dom'
+
+const handleClick = () => {
+    window.location.href = 'http://localhost:3001';
+};
 export default function ButtonAppBar() {
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -13,9 +18,9 @@ export default function ButtonAppBar() {
                 <Toolbar>
                     <img src={logo} style={{ width: "15%", height: "15%" }} alt="My Icon" />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}/>
-                    <IconButton color="inherit" size='large'>
-                        <Face6RoundedIcon fontSize="large" style={{color:"#5F64FA"}}/>
-                    </IconButton>
+                        <IconButton color="inherit" size='large' onClick={handleClick}>
+                            <Face6RoundedIcon fontSize="large" style={{color:"#5F64FA"}}/>
+                        </IconButton>
                 </Toolbar>
             </AppBar>
         </Box>
