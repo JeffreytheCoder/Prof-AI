@@ -1,38 +1,33 @@
 import os
 import sys
 import time
-from fastapi import FastAPI, File, UploadFile
 import asyncio
 import random
 import requests
 import subprocess
 import re
+
 from dotenv import load_dotenv
-app = FastAPI()
 from dotenv import load_dotenv
+
+from fastapi import FastAPI, File, UploadFile
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+
 from langchain.document_loaders.unstructured import UnstructuredFileLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
-from langchain.chains import RetrievalQA
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
-from langchain.tools import BaseTool
-from langchain.llms import OpenAI
-from langchain import LLMMathChain, SerpAPIWrapper
-from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.prompts import PromptTemplate
 from langchain.llms import Cohere
 from langchain.embeddings import CohereEmbeddings
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chains import LLMChain
-from langchain.chains import SimpleSequentialChain
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
 
 load_dotenv()
@@ -46,67 +41,16 @@ if not api_key:
     sys.exit(1)
 
 
-loader = UnstructuredFileLoader("./docs/2.7.1.txt")
+loader = UnstructuredFileLoader("./input-docs/2.7.1.txt")
 documents = loader.load()
 persist_directory = 'db'
-saved_slides= """# Slide 1: Socket Programming with UDP
-- Processes communicate by sending messages into sockets.
-- UDP packets require a destination address be attached before being sent.
-- Client sends a packet to the server's socket with destination address attached.
-
-<image> (keyword: UDP Socket Programming)
-
----
-
-# Slide 2: Destination Address in UDP
-- Destination address includes destination host’s IP address and socket's port number.
-- Routers in the Internet use destination IP address to route packet to destination host.
-- Destination socket's port number identifies the particular socket in the destination host.
-
-<image> (keyword: UDP Destination Address)
-
----
-
-# Slide 3: UDP Client-Server program
-- Client reads a line, sends to server.
-- Server receives data, modifies to uppercase.
-- Server sends modified data to client.
-
-<image> (keyword: UDP program)
-
----
-
-# Slide 4: Client Side of Application
-- Create clientSocket with a random port number.
-- Client sends message to server with message and destination address with sendto().
-- Client waits for server response.
-
-<image> (keyword: UDP Client Side)
-
----
-
-# Slide 5: Server Side of Application
-- Bind the port number 12000 to the server’s socket.
-- Waits for client request, receives data from client.
-- Modifies data and sends modified data to client's address.
-
-<image> (keyword: UDP Server Side)
-
----
-
-# Slide 6: Testing the Application
-- Run UDPClient.py on one host and UDPServer.py on another host.
-- Be sure to provide the proper hostname or IP address of the server in UDPClient.py.
-- Execute UDPServer.py on the server host.
-- Execute UDPClient.py on client host.
-- Try various sentenses and get updated capitalized sentences back.
-
-<image> (keyword: UDP application test)"""
+slide_file_name = ""
+saved_slides= ""
 # Documents
 # file_name = ""
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
-    file_name = "docs/"+file.filename
+    file_name = "input-docs/"+file.filename
     with open(file_name, "wb") as buffer:
         while True:
             data = await file.read(1024)
@@ -138,18 +82,18 @@ slides_prompt = """
     1. Each --- indicates a new slide. Limit 50 words within each slides.
     2. # is for the title of each slide.
     3. - is for bullet point. 1., 2., 3. are numbered points.
-    4. <image> (keyword: xxx) is an image illustrating the keyword "xxx". You must include one image for each slide. Make sure keyword "xxx" for each slide is different enough.
+    4. <image> (keyword: xxx) is an image illustrating the keyword "xxx". You must include one image for each slide. Make sure keyword "xxx" for each slide is different enough. The keyword "xxx" must be at least 10 words that summarize the entire slide.
     5. `` is for code.
 
     Following is an example for the above rules for the format:
-    # Slide 1: Introduction to Marp
+    # Introduction to Marp
 
     Marp is a powerful tool that allows you to create presentations using simple Markdown syntax. You can easily create slides and format text with Marp.
     <image> (keyword: what is Marp)
 
     ---
 
-    # Slide 2: Installing Marp
+    # Installing Marp
 
     To get started with Marp, you can install the Marp CLI or use Marp for Visual Studio Code extension.
 
@@ -172,32 +116,6 @@ SLIDES_PROMPT = PromptTemplate(
 # chat history
 chat_history = []
 
-# TODO: post api to upload PDF
-
-# llm2 = OpenAI(temperature=.7)
-# template = """
-# You are a format checker. You are given a text, try to see: 
-# 1. If in the begining, there is the following text:
-
-# --- 
-# marp: true
-# theme: default
-# paginate: true
-# size: 16:9
-
-# (when you check the text, ignore the spaces). If not, add it.
-
-# 2. Convert every ## to #
-
-# 3. If before each single # symbol there is a three dash ---. If not, add it.
-
-# The following is the original text, check and revise if needed, then output the revised text.
-# {output_text}
-
-# Revised text:"""
-
-# TOKEN = 1800
-
 
 @app.get("/")
 async def test(request: Request):
@@ -205,7 +123,7 @@ async def test(request: Request):
     return 'test'
 
 
-@app.post("/slides")
+@app.get("/slides")
 async def generate_response():
     # Split doc into texts
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
@@ -215,7 +133,7 @@ async def generate_response():
     if MODEL == "COHERE":
         llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
     else:
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1100)
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5, max_tokens=1100)
     
     # Summarization chain
     chain = load_summarize_chain(llm, chain_type="stuff", prompt=SLIDES_PROMPT)
@@ -224,13 +142,14 @@ async def generate_response():
     global saved_slides 
     saved_slides = slides
 
-    # TODO: Generate PDF by using getImage.py, return PDF
     created_time = int(time.time())
     response_data = {
         "created": created_time,
-        "model": "llm-gpt-demo-v1",
+        "model": "prof-ai-v1",
         "content": slides
     }
+    global slide_file_name
+    slide_file_name = convert_md(slides)
 
     return JSONResponse(content=response_data)
 
@@ -245,7 +164,7 @@ transcripts_prompt = """
 
     """ + saved_slides + """
 
-    Slies ends.
+    Slides ends.
     
     Suppose you are a professor teaching a lecture using the given textbook and slides.
     You are humorous, yet professional in your way of teaching.
@@ -263,7 +182,7 @@ TRANSCRIPTS_PROMPT = PromptTemplate(
     template=transcripts_prompt, input_variables=["text"]
 )
 
-@app.post("/transcripts")
+@app.get("/transcripts")
 async def generate_response_for_transcripts():
     print(transcripts_prompt)
     # Split doc into texts
@@ -272,7 +191,7 @@ async def generate_response_for_transcripts():
     
     MODEL = "OPENAI"  # COHERE
     if MODEL == "COHERE":
-        llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
+        llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=1, max_tokens=2800)
     else:
         llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1000)
 
@@ -284,11 +203,15 @@ async def generate_response_for_transcripts():
     transcripts = chain.run(split_texts)
     print(transcripts)
 
+    # Parse transcripts
+    pattern = r"#section_\d+\n(.+?)(?=\n#section_\d+|\Z)"
+    transcript_sections = re.findall(pattern, transcripts, flags=re.DOTALL)
+
     created_time = int(time.time())
     response_data = {
         "created": created_time,
-        "model": "llm-gpt-demo-v1",
-        "content": transcripts
+        "model": "prof-ai-v1",
+        "content": transcript_sections
     }
 
     return JSONResponse(content=response_data)
@@ -326,43 +249,21 @@ async def generate_response_for_qa(request: Request):
     chroma = Chroma.from_documents(documents=split_texts, embeddings=embeddings, persist_directory=persist_directory)
     question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT)
     doc_chain = load_qa_chain(llm, chain_type="map_reduce")
-    # QA Chain
-    # chain = load_qa_chain(llm)
-    # content = chroma.similarity_search(user_input)
-    # answer = chain.run(input_documents=content, question=user_input)
-    # print(answer)
     
+    # Chain
     lec1_qa = ConversationalRetrievalChain(
                                           retriever=chroma.as_retriever(),
                                           question_generator=question_generator,
                                           combine_docs_chain=doc_chain,
                                           )
-
-    # Agents
-    # g_search = GoogleSearchAPIWrapper()
-    tools = [
-        Tool(
-            name = "QA System",
-            func=lec1_qa.run,
-            description="useful for when you need to answer questions about the lectrue 1 of CS118 computer network. Input should be a fully formed question."
-        )
-        # Tool(
-        #     name = "CS118 Lec1 Further Info System",
-        #     func=g_search.run,
-        #     description="useful for when you need to answer questions about the extra information extending the lectrue 1 content of CS118 computer network, when requesting for further information on the lecture content. Input should be a fully formed question."
-        # )
-    ]
-    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-    
-    
-    #user_input = "I dont know TCP uses a three-way handshake, tell me the details"
     bot_response = lec1_qa({"question": user_input, "chat_history": chat_history})
     chat_history.append((user_input, bot_response["answer"]))
+
     # Response 
     created_time = int(time.time())
     response_data = {
         "created": created_time,
-        "model": "llm-gpt-demo-v1",
+        "model": "prof-ai-v1",
         "content": bot_response
     }
 
@@ -373,11 +274,11 @@ def convert_md(file_string):
     replaced_file_string = replace_image_with_url(get_images_by_keywords(find_image_keywords(file_string)), file_string)
     hash = random.getrandbits(128)
     print("hash value: %032x" % hash)
-    f = open(f"../docs/{hash}.md", "w")
+    f = open(f"./slides/{hash}.md", "w")
     f.write(replaced_file_string)
     f.close()
-    subprocess.run(["marp", f"../docs/{hash}.md", "-o", f"../docs/{hash}.pdf"])
-
+    subprocess.run(["marp", f"./slides/{hash}.md", "-o", f"./slides/{hash}.pdf"])
+    return f"./slides/{hash}.pdf"
 
 def replace_image_with_url(res, file_string):
     for key in res:
