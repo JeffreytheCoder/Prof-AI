@@ -1,5 +1,6 @@
 import Slides from './components/Slides';
 import Upload from './components/Upload'
+import {Slide} from "@mui/material";
 
 const routes = [
   {
