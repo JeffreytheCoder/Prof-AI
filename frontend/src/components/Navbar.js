@@ -12,7 +12,7 @@ import logo from '../logo.png'
 export default function ButtonAppBar() {
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar color="inherit" elevation={0}>
+            <AppBar color="inherit" elevation={0} position="sticky">
                 <Toolbar>
                     <img src={logo} style={{ width: "15%", height: "15%" }} alt="My Icon" />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}/>
