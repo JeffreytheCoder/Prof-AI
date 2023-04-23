@@ -26,14 +26,16 @@ export const BotProvider = (props) => {
   useEffect(() => {
     const slides = localStorage.getItem('slides');
     const transcriptsStr = localStorage.getItem('transcripts');
-    const transcripts = transcriptsStr.split("@@@");
+    // console.log(slides, transcriptsStr); 
     if (slides) {
       setSlides(slides);
     }
-    if (transcripts) {
+    if (transcriptsStr.length > 0) {
+      const transcripts = transcriptsStr.split("@@@");
+      // console.log(typeof transcripts)
       setTranscripts(transcripts);
     }
-    console.log(slides, transcripts)
+    // console.log(slides, transcripts)
   }, [])
 
   const uploadFile = async (inputFile) => {
@@ -67,7 +69,7 @@ export const BotProvider = (props) => {
 
     const json = await res.json();
     setSlides(json.content);
-    localStorage.setItem('slides', json.content.join("@@@"));
+    localStorage.setItem('slides', json.content);
 
     return json.content
   };
@@ -83,7 +85,7 @@ export const BotProvider = (props) => {
 
     const json = await res.json();
     setTranscripts(json.content);
-    localStorage.setItem('transcripts', json.content);
+    localStorage.setItem('transcripts', json.content.join("@@@"));
 
     return json.content
   };

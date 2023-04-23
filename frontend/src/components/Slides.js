@@ -53,7 +53,8 @@ const Slides = () => {
             <div className="App" align="center" >
             { slides && (
           <Document
-            file={"/"+slides+".pdf"}
+          //"/"+slides+".pdf"
+            file="/188334990978003433012803331448620310546.pdf"
             onLoadSuccess={onDocumentLoadSuccess}>
             {isLoading && renderedPageNumber ? (
                 <Page

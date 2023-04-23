@@ -2,25 +2,29 @@ import React, { useState, useEffect } from "react";
 import useBot from "../hooks/useBot";
 
 const Videos = ({ transcripts, pageNum, nextPage }) => {
-    console.log(transcripts)
-    // const {transcripts} = useBot();
-
     const [videoIds, setVideoIds] = useState([]);
     const [videoAvailable, setVideoAvailable] = useState(false);
     const [videoURL, setVideoURL] = useState('');
 
+    const getVideoIds = async () => {
+        const videoIds = await Promise.all(transcripts.map(async (string) => {
+            return await getVideoId(string);
+        }));
+        setVideoIds(videoIds);
+    };
+
     useEffect(() => {
-        const getVideoIds = async () => {
-            const videoIds = await Promise.all(transcripts.map(async (string) => {
-                return await getVideoId(string);
-            }));
-            setVideoIds(videoIds);
-        };
-        getVideoIds();
-    }, []);
+        if (transcripts.length > 0 && videoIds.length == 0) {
+            getVideoIds();
+        }
+    }, [transcripts]);
+
+    useEffect(() => {
+
+    }, [videoIds])
 
     // const didKey = 'aGFvYm8xMDA4OUBnbWFpbC5jb20:7fGvQp8mX-XEzDMEFP4Ux'; // TESTING
-    const didKey = 'aGFvYm9icnVpbjIwQGcudWNsYS5lZHU:e6d9lH9yXxXqFXlHHzdcz'; 
+    const didKey = 'amVmZnJleXplcGVuZ3l1QGcudWNsYS5lZHU:w-3Rvjr6nxt_vgPaBjVt9'; 
     const headers = {
         'Authorization': 'Basic ' + didKey,
         'Accept': 'application/json',
@@ -48,15 +52,18 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
-                return data.id; 
+                // return data.id; 
                 // TESTING
-                // if (string === transcripts[0])
-                //     return 'tlk_N3zMKvHO4QyJF3cpnBT68';
-                // else if (string === transcripts[1])
-                //     return 'tlk_Sp-lkp3vjAUtKeZZ3kBRe';
-                // else if (string === transcripts[2])
-                //     return 'tlk_uN0Ypv2ZMT6_4eblQW7NA';
+                if (string === transcripts[0])
+                    return 'tlk_AkI7t_SHzCxWwktplRgAd'; 
+                else if (string === transcripts[1])
+                    return 'tlk_HMvJBSTU2ZR6_Dv1ssTyJ'; 
+                else if (string === transcripts[2])
+                    return 'tlk_rEOHC4V4UfOBkE5qphRe9';
+                else if (string === transcripts[3])
+                    return 'tlk_seMe2OGBCSv5ldIlm9ikC';
+                else if (string === transcripts[4])
+                    return 'tlk_At5xwd902YE5vfsEh7HP9';
                 // TESTING
             })
             .catch(err => console.log(err));
@@ -72,6 +79,7 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.result_url !== undefined) {
+                        // console.log(data);
                         setVideoURL(data.result_url);
                         setVideoAvailable(true);
                         // clearInterval(interval);
