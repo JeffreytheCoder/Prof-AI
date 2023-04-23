@@ -41,8 +41,8 @@ if not api_key:
     sys.exit(1)
 
 
-loader = UnstructuredFileLoader("./input-docs/2.7.1.txt")
-documents = loader.load()
+# loader = UnstructuredFileLoader("./input-docs/2.7.1.txt")
+# documents = loader.load()
 persist_directory = 'db'
 slide_file_name = ""
 saved_slides= ""
