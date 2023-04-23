@@ -1,9 +1,11 @@
 import os
 import sys
 import time
-import subprocess
-import random
+from fastapi import FastAPI, File, UploadFile
+import asyncio
 
+app = FastAPI()
+from flask import Flask, request
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -23,6 +25,12 @@ from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.prompts import PromptTemplate
 from langchain.llms import Cohere
 from langchain.embeddings import CohereEmbeddings
+from langchain.chains.summarize import load_summarize_chain
+from langchain.chains import LLMChain
+from langchain.chains import SimpleSequentialChain
+from langchain.chains import ConversationalRetrievalChain
+from langchain.chains.qa_with_sources import load_qa_with_sources_chain
+from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
 
 load_dotenv()
 app = FastAPI()
@@ -34,24 +42,135 @@ if not api_key:
     print("OPENAI_API_KEY not found in .env file")
     sys.exit(1)
 
-# Documents
-loader = UnstructuredFileLoader('./docs/lecture1.txt')
+
+loader = UnstructuredFileLoader("./docs/2.7.1.txt")
 documents = loader.load()
 persist_directory = 'db'
+global saved_slides 
+saved_slides= """# Slide 1: Socket Programming with UDP
+- Processes communicate by sending messages into sockets.
+- UDP packets require a destination address be attached before being sent.
+- Client sends a packet to the server's socket with destination address attached.
+
+<image> (keyword: UDP Socket Programming)
+
+---
+
+# Slide 2: Destination Address in UDP
+- Destination address includes destination host’s IP address and socket's port number.
+- Routers in the Internet use destination IP address to route packet to destination host.
+- Destination socket's port number identifies the particular socket in the destination host.
+
+<image> (keyword: UDP Destination Address)
+
+---
+
+# Slide 3: UDP Client-Server program
+- Client reads a line, sends to server.
+- Server receives data, modifies to uppercase.
+- Server sends modified data to client.
+
+<image> (keyword: UDP program)
+
+---
+
+# Slide 4: Client Side of Application
+- Create clientSocket with a random port number.
+- Client sends message to server with message and destination address with sendto().
+- Client waits for server response.
+
+<image> (keyword: UDP Client Side)
+
+---
+
+# Slide 5: Server Side of Application
+- Bind the port number 12000 to the server’s socket.
+- Waits for client request, receives data from client.
+- Modifies data and sends modified data to client's address.
+
+<image> (keyword: UDP Server Side)
+
+---
+
+# Slide 6: Testing the Application
+- Run UDPClient.py on one host and UDPServer.py on another host.
+- Be sure to provide the proper hostname or IP address of the server in UDPClient.py.
+- Execute UDPServer.py on the server host.
+- Execute UDPClient.py on client host.
+- Try various sentenses and get updated capitalized sentences back.
+
+<image> (keyword: UDP application test)"""
+# Documents
+# file_name = ""
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile = File(...)):
+    file_name = "../files/"+file.filename
+    with open(os.path.join("uploads", file_name), "wb") as buffer:
+        while True:
+            data = await file.read(1024)
+            if not data:
+                break
+            buffer.write(data)
+        asyncio.create_task(file.close())
+    global loader, documents
+    loader = UnstructuredFileLoader(file_name)
+    documents = loader.load()
+    #documents = loader()
+    
+    return {"message": f"File '{file.filename}' uploaded successfully"}
+
+
 
 # Prompt
-prompt_template = """
-{context}
+slides_prompt = """ 
+    The following is the given textbook material:
+    
+    {text}
+    
+    For the textbook material above:
+    1. Break this text into chunks of concepts, with each chunck contains pieces of text speaking about the same one concept. 
+    2. For each such chunks, summarize the content, give online title about the core concept, with two to three bullet points about the details of the concept, each bullet point must not exceed 15 words.
+    3. With this title, bullet, description for each chunk, wirte a slides for each chunk in Marp format. 
+    
+    Rules for slides in Marp format:
+    1. Each --- indicates a new slide. Limit 50 words within each slides.
+    2. # is for the title of each slide.
+    3. - is for bullet point. 1., 2., 3. are numbered points.
+    4. <image> (keyword: xxx) is an image illustrating the keyword "xxx". You must include one image for each slide. Make sure keyword "xxx" for each slide is different enough.
+    5. `` is for code.
 
-Learn the textbook information above. Imagine you are a computer science professor teaching computer networking. Output a few slides in markdown format, each summarizing a part of the textbook material above, in sequence of the text material. Include a image link you found online that effectively illustrate the material in that slide.
+    Following is an example for the above rules for the format:
+    # Slide 1: Introduction to Marp
 
-After each slide, follow a few paragraphs on how you would talk to the students (like an experienced computer science professor) to effectively teach the material contained in the slides.
-"""
-PROMPT = PromptTemplate(
-    template=prompt_template, input_variables=["context"]
+    Marp is a powerful tool that allows you to create presentations using simple Markdown syntax. You can easily create slides and format text with Marp.
+    <image> (keyword: what is Marp)
+
+    ---
+
+    # Slide 2: Installing Marp
+
+    To get started with Marp, you can install the Marp CLI or use Marp for Visual Studio Code extension.
+
+    1. Marp CLI: `npm install -g @marp-team/marp-cli`
+    2. Marp for Visual Studio Code: Install the extension from the Visual Studio Code marketplace.
+    
+    <image> (keyword: how to install Marp)
+
+    Now ends with format introduction. 
+    
+    Output all the slides in 1800 tokens, but make sure they still cover all things in the input text.
+    Make sure there are no space or tab before any line of your output.
+    Here is your output of slides:
+    """
+
+SLIDES_PROMPT = PromptTemplate(
+    template=slides_prompt, input_variables=["text"]
 )
-chain_type_kwargs = {"prompt": PROMPT}
 
+# chat history
+chat_history = []
+
+# TODO: post api to upload PDF
 
 @app.get("/")
 async def test(request: Request):
@@ -59,64 +178,164 @@ async def test(request: Request):
     return 'test'
 
 
-@app.post("/")
-async def generate_response(request: Request):
-    # Input
-    request_data = await request.json()
-    user_input = request_data['user_input']
-
-    # Index
-    text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=100)
+@app.post("/slides")
+async def generate_response():
+    # Split doc into texts
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     split_texts = text_splitter.split_documents(documents)
+    
+    MODEL = "OPENAI"  # COHERE
+    if MODEL == "COHERE":
+        llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
+    else:
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1100)
+    
+    # Summarization chain
+    chain = load_summarize_chain(llm, chain_type="stuff", prompt=SLIDES_PROMPT)
+    slides = chain.run(split_texts)
+    print(slides)
+    saved_slides = slides
 
-    llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=2, max_tokens=4096)
-    embeddings = CohereEmbeddings(cohere_api_key=cohere_api_key, model="command-xlarge-nightly")
-
-    # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=10000)
-    # embeddings = OpenAIEmbeddings(model="gpt-3.5-turbo")
-
-    chroma = Chroma.from_documents(documents=split_texts, embeddings=embeddings, persist_directory=persist_directory)
-
-    # Chain
-    chain = load_qa_chain(llm)
-    content = chroma.similarity_search(user_input)
-    answer = chain.run(input_documents=content, question=user_input)
-    trimmed_answer = answer.replace("\n", " ")
-
-    # lec1_qa = RetrievalQA.from_chain_type(llm=llm, 
-    #                                       chain_type="stuff", 
-    #                                       retriever=chroma.as_retriever(), 
-    #                                       chain_type_kwargs=chain_type_kwargs)
-
-    # Agents
-    # g_search = GoogleSearchAPIWrapper()
-    # tools = [
-    #     Tool(
-    #         name = "CS118 Lec1 QA System",
-    #         func=lec1_qa.run,
-    #         description="useful for when you need to answer questions about the lectrue 1 of CS118 computer network. Input should be a fully formed question."
-    #     ),
-    #     Tool(
-    #         name = "CS118 Lec1 Further Info System",
-    #         func=g_search.run,
-    #         description="useful for when you need to answer questions about the extra information extending the lectrue 1 content of CS118 computer network, when requesting for further information on the lecture content. Input should be a fully formed question."
-    #     )
-    # ]
-    # agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-
-    # Response
-    # bot_response = lec1_qa.run(user_input)
+    # TODO: Generate PDF by using getImage.py, return PDF
     created_time = int(time.time())
     response_data = {
         "created": created_time,
         "model": "llm-gpt-demo-v1",
-        "content": trimmed_answer
+        "content": slides
+    }
+
+    return JSONResponse(content=response_data)
+
+transcripts_prompt = """ 
+    The following is the given textbook:
+    
+    {text}
+    
+    Textbook ends.
+    
+    The following is the given slides:
+    
+    {slides}
+    
+    Slides end.
+    
+    Suppose you are a professor teaching a lecture using the given textbook and slides.
+    You are humorous, yet professional in your way of teaching.
+    
+    You are going to write a transcript for your lecture. 
+    Format your transcript into sections where each section corresponds to a slide in the given slides. Each section starts with #section_number.
+    Each slide in the given slides start with --- and the title for this slides starts with #.
+    For each bullet point in a slide, your transcript uses related information in the given textbook to explain what the bullet point means, and give example.
+    
+    Here is your transcript:
+    """
+
+TRANSCRIPTS_PROMPT = PromptTemplate(
+    template=slides_prompt, input_variables=["text"]
+)
+
+@app.post("/transcripts")
+async def generate_response():
+    # Split doc into texts
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    split_texts = text_splitter.split_documents(documents)
+    
+    MODEL = "OPENAI"  # COHERE
+    if MODEL == "COHERE":
+        llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
+    else:
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1100)
+    
+    # Summarization chain
+    chain = load_summarize_chain(llm, chain_type="stuff", prompt=TRANSCRIPTS_PROMPT)
+    transcripts = chain.run({"text": split_texts, "slides":saved_slides})
+    print(transcripts)
+
+    created_time = int(time.time())
+    response_data = {
+        "created": created_time,
+        "model": "llm-gpt-demo-v1",
+        "content": transcripts
     }
 
     return JSONResponse(content=response_data)
 
 
-# @app.post("/qa")
+QA_prompt_template = """Text: {context}
+
+Question: {question}
+
+Answer the question based on the text provided. If the text doesn't contain the answer, reply that the answer is not available."""
+
+@app.post("/qa")
+# async def generate_response(request: Request):
+async def generate_response_for_qa(request: Request):
+    MODEL = "OPENAI"  # COHERE
+    
+    # Input
+    request_data = await request.json()
+    user_input = request_data['user_input']
+    # user_input = "based on what you know, give me a summary for the text"
+
+    
+    # Split doc into chunks
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    split_texts = text_splitter.split_documents(documents)
+
+    # Convert chunks into Chroma vectorized index
+    if MODEL == "COHERE":
+        llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
+        embeddings = CohereEmbeddings(cohere_api_key=cohere_api_key, model="command-xlarge-nightly")
+    else:
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5, max_tokens=2800)
+        embeddings = OpenAIEmbeddings(model="gpt-3.5-turbo")
+    
+    chroma = Chroma.from_documents(documents=split_texts, embeddings=embeddings, persist_directory=persist_directory)
+    question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT)
+    doc_chain = load_qa_chain(llm, chain_type="map_reduce")
+    # QA Chain
+    # chain = load_qa_chain(llm)
+    # content = chroma.similarity_search(user_input)
+    # answer = chain.run(input_documents=content, question=user_input)
+    # print(answer)
+    
+    lec1_qa = ConversationalRetrievalChain(
+                                          retriever=chroma.as_retriever(),
+                                          question_generator=question_generator,
+                                          combine_docs_chain=doc_chain,
+                                          )
+
+    # Agents
+    # g_search = GoogleSearchAPIWrapper()
+    tools = [
+        Tool(
+            name = "QA System",
+            func=lec1_qa.run,
+            description="useful for when you need to answer questions about the lectrue 1 of CS118 computer network. Input should be a fully formed question."
+        )
+        # Tool(
+        #     name = "CS118 Lec1 Further Info System",
+        #     func=g_search.run,
+        #     description="useful for when you need to answer questions about the extra information extending the lectrue 1 content of CS118 computer network, when requesting for further information on the lecture content. Input should be a fully formed question."
+        # )
+    ]
+    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+    
+    
+    #user_input = "I dont know TCP uses a three-way handshake, tell me the details"
+    bot_response = lec1_qa({"question": user_input, "chat_history": chat_history})
+    chat_history.append((user_input, bot_response["answer"]))
+    # Response 
+    created_time = int(time.time())
+    response_data = {
+        "created": created_time,
+        "model": "llm-gpt-demo-v1",
+        "content": bot_response
+    }
+
+    return JSONResponse(content=response_data)
+
+
 @app.post("/convert")
 async def convert_md(file_string):
     hash = random.getrandbits(128)
@@ -125,4 +344,3 @@ async def convert_md(file_string):
     f.write(file_string)
     f.close()
     subprocess.run(["marp", f"{hash}.md", "--pdf", "--theme", "uncover"])
-
