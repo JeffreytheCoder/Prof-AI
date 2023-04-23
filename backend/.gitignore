@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 /app/*.md
 /app/*.pdf
+.DS_Store
 # C extensions
 *.so
 
