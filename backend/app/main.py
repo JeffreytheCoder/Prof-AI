@@ -49,7 +49,6 @@ if not api_key:
 loader = UnstructuredFileLoader("./docs/2.7.1.txt")
 documents = loader.load()
 persist_directory = 'db'
-global saved_slides 
 saved_slides= """# Slide 1: Socket Programming with UDP
 - Processes communicate by sending messages into sockets.
 - UDP packets require a destination address be attached before being sent.
@@ -107,8 +106,8 @@ saved_slides= """# Slide 1: Socket Programming with UDP
 # file_name = ""
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
-    file_name = "../files/"+file.filename
-    with open(os.path.join("uploads", file_name), "wb") as buffer:
+    file_name = "docs/"+file.filename
+    with open(file_name, "wb") as buffer:
         while True:
             data = await file.read(1024)
             if not data:
@@ -161,7 +160,7 @@ slides_prompt = """
 
     Now ends with format introduction. 
     
-    Output all the slides in 1800 tokens, but make sure they still cover all things in the input text.
+    Output all the slides in 1100 tokens, but make sure they still cover all things in the input text.
     Make sure there are no space or tab before any line of your output.
     Here is your output of slides:
     """
@@ -222,6 +221,7 @@ async def generate_response():
     chain = load_summarize_chain(llm, chain_type="stuff", prompt=SLIDES_PROMPT)
     slides = chain.run(split_texts)
     print(slides)
+    global saved_slides 
     saved_slides = slides
 
     # TODO: Generate PDF by using getImage.py, return PDF
@@ -238,32 +238,34 @@ transcripts_prompt = """
     The following is the given textbook:
     
     {text}
-    
+
     Textbook ends.
-    
+
     The following is the given slides:
-    
-    {slides}
-    
-    Slides end.
+
+    """ + saved_slides + """
+
+    Slies ends.
     
     Suppose you are a professor teaching a lecture using the given textbook and slides.
     You are humorous, yet professional in your way of teaching.
     
-    You are going to write a transcript for your lecture. 
-    Format your transcript into sections where each section corresponds to a slide in the given slides. Each section starts with #section_number.
+    You are going to write a speech draft for your lecture. 
     Each slide in the given slides start with --- and the title for this slides starts with #.
-    For each bullet point in a slide, your transcript uses related information in the given textbook to explain what the bullet point means, and give example.
+    Format your speech draft into sections where each section corresponds to a slide in the given slides. Each section starts with #section_number.
+    For each bullet point in a slide, write two to three sentence using related information in the given textbook to explain what the bullet point means, and give example.
     
-    Here is your transcript:
+    Output your speech draft in 1000 tokens, but make sure they still cover all things in the input text.
+    Write your speech draft here:
     """
 
 TRANSCRIPTS_PROMPT = PromptTemplate(
-    template=slides_prompt, input_variables=["text"]
+    template=transcripts_prompt, input_variables=["text"]
 )
 
 @app.post("/transcripts")
-async def generate_response():
+async def generate_response_for_transcripts():
+    print(transcripts_prompt)
     # Split doc into texts
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     split_texts = text_splitter.split_documents(documents)
@@ -272,11 +274,14 @@ async def generate_response():
     if MODEL == "COHERE":
         llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=0.5, max_tokens=2800)
     else:
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1100)
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=1000)
+
+    # Combine textbook and slides
+    # prompt_input = split_texts + ["Textbook ends", "The following is the given slides:" + saved_slides]
     
     # Summarization chain
     chain = load_summarize_chain(llm, chain_type="stuff", prompt=TRANSCRIPTS_PROMPT)
-    transcripts = chain.run({"text": split_texts, "slides":saved_slides})
+    transcripts = chain.run(split_texts)
     print(transcripts)
 
     created_time = int(time.time())
