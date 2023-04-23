@@ -61,22 +61,24 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
             .catch(err => console.log(err));
     };
 
-    const id = videoIds[pageNum];
-    let interval = setInterval(() => {
-        fetch(url + id, {
-            method: 'GET',
-            headers: headers,
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.result_url !== undefined) {
-                    setVideoURL(data.result_url);
-                    setVideoAvailable(true);
-                    clearInterval(interval);
-                }
+    if (pageNum <= videoIds.length) {
+        const id = videoIds[pageNum];
+        let interval = setInterval(() => {
+            fetch(url + id, {
+                method: 'GET',
+                headers: headers,
             })
-            .catch(err => console.log(err));
-    }, 1000);
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result_url !== undefined) {
+                        setVideoURL(data.result_url);
+                        setVideoAvailable(true);
+                        clearInterval(interval);
+                    }
+                })
+                .catch(err => console.log(err));
+        }, 1000);
+    }
 
 
     const handleVideoClick = (event) => {

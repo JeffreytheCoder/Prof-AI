@@ -24,7 +24,9 @@ const Slides = () => {
     setPageNumber(1);
   }
   function changePage(offset) {
-    setPageNumber(prevPageNumber => prevPageNumber + offset);
+    if (numPages > pageNumber) {
+      setPageNumber(prevPageNumber => prevPageNumber + offset);
+    }
   }
 
   function previousPage() {
