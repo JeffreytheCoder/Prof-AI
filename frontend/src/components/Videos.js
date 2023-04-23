@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useBot from "../hooks/useBot";
 
 const Videos = ({ transcripts, pageNum, nextPage }) => {
+    console.log(transcripts)
     // const {transcripts} = useBot();
 
     const [videoIds, setVideoIds] = useState([]);
@@ -18,8 +19,8 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
         getVideoIds();
     }, []);
 
-    const didKey = 'aGFvYm8xMDA4OUBnbWFpbC5jb20:7fGvQp8mX-XEzDMEFP4Ux'; // TESTING
-    // const didKey = 'aGFvYm9zaW1vbkBnbWFpbC5jb20:VZoFX9rvLUcqAZ_RBVitI'; 
+    // const didKey = 'aGFvYm8xMDA4OUBnbWFpbC5jb20:7fGvQp8mX-XEzDMEFP4Ux'; // TESTING
+    const didKey = 'aGFvYm9icnVpbjIwQGcudWNsYS5lZHU:e6d9lH9yXxXqFXlHHzdcz'; 
     const headers = {
         'Authorization': 'Basic ' + didKey,
         'Accept': 'application/json',
@@ -48,14 +49,14 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
             .then(res => res.json())
             .then(data => {
                 console.log(data);
-                // return data.id; 
+                return data.id; 
                 // TESTING
-                if (string === transcripts[0])
-                    return 'tlk_N3zMKvHO4QyJF3cpnBT68';
-                else if (string === transcripts[1])
-                    return 'tlk_Sp-lkp3vjAUtKeZZ3kBRe';
-                else if (string === transcripts[2])
-                    return 'tlk_uN0Ypv2ZMT6_4eblQW7NA';
+                // if (string === transcripts[0])
+                //     return 'tlk_N3zMKvHO4QyJF3cpnBT68';
+                // else if (string === transcripts[1])
+                //     return 'tlk_Sp-lkp3vjAUtKeZZ3kBRe';
+                // else if (string === transcripts[2])
+                //     return 'tlk_uN0Ypv2ZMT6_4eblQW7NA';
                 // TESTING
             })
             .catch(err => console.log(err));
