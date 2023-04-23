@@ -5,18 +5,17 @@ import React from 'react';
 import { BotProvider } from './contexts/BotContext';
 import ButtonAppBar from "./components/Navbar"
 import {AppBar, Container, IconButton, Box, Paper, Grid} from "@mui/material";
+import { useRoutes } from 'react-router-dom';
+import routes from './routes';
 
 function App() {
+  const content = useRoutes(routes);
+  console.log(content)
+
   return (
       <BotProvider>
-          <div>
-              <ButtonAppBar></ButtonAppBar>
-          </div>
-          <div>
-              <Upload />
-          </div>
-          <Container>
-          </Container>
+              <ButtonAppBar />
+              {content}
       </BotProvider>
 
   );
