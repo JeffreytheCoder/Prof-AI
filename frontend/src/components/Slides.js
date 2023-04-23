@@ -36,7 +36,7 @@ const Slides = () => {
 
   return (
       <Container fixed>
-        <div className="App" align="center">
+        <div className="App" align="center" style={{marginTop:"15vh"}}>
           <Document
             file="/test.pdf"
             onLoadSuccess={onDocumentLoadSuccess}>

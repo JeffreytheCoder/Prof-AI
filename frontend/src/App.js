@@ -2,15 +2,17 @@ import './App.css';
 import Slides from './components/Slides';
 import ButtonAppBar from "./components/Navbar"
 import React from 'react';
-import {AppBar, Container, IconButton, Box, Paper} from "@mui/material";
+import {AppBar, Container, IconButton, Box, Paper, Grid} from "@mui/material";
 
 function App() {
   return (
       <div>
-          <ButtonAppBar></ButtonAppBar>
-          <Paper>
+          <div>
+              <ButtonAppBar></ButtonAppBar>
+          </div>
+          <div>
               <Slides />
-          </Paper>
+          </div>
           <Container>
           </Container>
       </div>

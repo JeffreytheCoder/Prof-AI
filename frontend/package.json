@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.10.6",
     "@mikecousins/react-pdf": "^6.1.1",
     "@mui/icons-material": "^5.11.16",
+    "@mui/joy": "^5.0.0-alpha.76",
     "@mui/material": "^5.12.1",
     "@mui/material-next": "^6.0.0-alpha.82",
     "@testing-library/jest-dom": "^5.16.5",
