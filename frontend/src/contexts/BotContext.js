@@ -3,27 +3,49 @@ import { createContext, useState } from 'react';
 const ROOT_URL = 'http://localhost:8000';
 
 const initialState = {
+  file: new Blob(),
+  uploaded: false,
   slides: new Blob(),
   transcripts: [],
 };
 
 const BotContext = createContext({
   ...initialState,
-  getSlides: (formData) => null,
+  uploadFile: () => Boolean,
+  getSlides: () => null,
+  getTranscripts: () => null,
 });
 
 export const BotProvider = (props) => {
   const { children } = props;
+  const [file, setFile] = useState(new Blob());
+  const [uploaded, setUploaded] = useState(false);
   const [slides, setSlides] = useState(new Blob());
   const [transcripts, setTranscripts] = useState([]);
 
-  const getSlides = async (formData) => {
+  const uploadFile = async (inputFile) => {
+    setFile(inputFile);
+    const formData = new FormData();
+    formData.append('file', inputFile);
+
     const res = await fetch(`${ROOT_URL}/slides`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       method: 'POST',
       body: formData,
+    });
+
+    if (res.status !== 200) {
+      console.error(res);
+      setUploaded(false);
+      return false;
+    } else {
+      setUploaded(true);
+      return true;
+    }
+  };
+
+  const getSlides = async () => {
+    const res = await fetch(`${ROOT_URL}/slides`, {
+      method: 'GET',
     });
 
     if (res.status !== 200) {
@@ -34,11 +56,28 @@ export const BotProvider = (props) => {
     setSlides(blob);
   };
 
+  const getTranscripts = async () => {
+    const res = await fetch(`${ROOT_URL}/transcripts`, {
+      method: 'GET',
+    });
+
+    if (res.status !== 200) {
+      throw new Error('fileToSlides returned an error');
+    }
+
+    const json = await res.json();
+    setTranscripts(json.content);
+  };
+
   return (
     <BotContext.Provider
       value={{
         slides,
         transcripts,
+        uploaded,
+        file,
+        uploadFile,
+        getTranscripts,
         getSlides,
       }}
     >
