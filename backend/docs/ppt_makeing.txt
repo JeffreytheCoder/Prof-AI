@@ -1,0 +1,138 @@
+Teaching with PowerPoint
+When effectively planned and used, PowerPoint (or similar tools, like Google Slides) can enhance instruction. People are divided on the effectiveness of this ubiquitous presentation program—some say that PowerPoint is wonderful while others bemoan its pervasiveness. No matter which side you take, PowerPoint does offer effective ways to enhance instruction when used and designed appropriately.
+
+PowerPoint can be an effective tool to present material in the classroom and encourage student learning. You can use PowerPoint to project visuals that would otherwise be difficult to bring to class. For example, in an anthropology class, a single PowerPoint presentation could project images of an anthropological dig from a remote area, questions asking students about the topic, a chart of related statistics, and a mini quiz about what was just discussed that provides students with information that is visual, challenging, and engaging.
+
+PowerPoint can be an effective tool to present material in the classroom and encourage student learning.
+This section is organized in three major segments: Part I will help faculty identify and use basic but important design elements, Part II will cover ways to enhance teaching and learning with PowerPoint, and Part III will list ways to engage students with PowerPoint.
+
+PART I: Designing the PowerPoint Presentation
+Accessibility
+Student accessibility—students with visual or hearing impairments may not be able to fully access a PowerPoint presentation, especially those with graphics, images, and sound.
+Use an accessible layout. Built-in slide template layouts were designed to be accessible: “the reading order is the same for people with vision and for people who use assistive technology such as screen readers” (University of Washington, n.d.). If you want to alter the layout of a theme, use the Slide Master; this will ensure your slides will retain accessibility.
+Use unique and specific slide titles so students can access the material they need.
+Consider how you display hyperlinks. Since screen readers read what is on the page, you may want to consider creating a hyperlink using a descriptive title instead of displaying the URL.
+All visuals and tables should include alt text. Alt text should describe the visual or table in detail so that students with visual impairments can “read” the images with their screen readers. Avoid using too many decorative visuals.
+All video and audio content should be captioned for students with hearing impairments. Transcripts can also be useful as an additional resource, but captioning ensures students can follow along with what is on the screen in real-time.
+Simplify your tables. If you use tables on your slides, ensure they are not overly complex and do not include blank cells. Screen readers may have difficulty providing information about the table if there are too many columns and rows, and they may “think” the table is complete if they come to a blank cell.
+Set a reading order for text on your slides. The order that text appears on the slide may not be the reading order of the text. Check that your reading order is correct by using the Selection Pane (organized bottom-up).
+Use Microsoft’s Accessibility Checker to identify potential accessibility issues in your completed PowerPoint. Use the feedback to improve your PowerPoint’s accessibility. You could also send your file to the Disability Resource Center to have them assess its accessibility (send it far in advance of when you will need to use it).
+Save your PowerPoint presentation as a PDF file to distribute to students with visual impairments.
+Preparing for the presentation
+Consider time and effort in preparing a PowerPoint presentation; give yourself plenty of lead time for design and development.
+PowerPoint is especially useful when providing course material online. Consider student technology compatibility with PowerPoint material put on the web; ensure images and graphics have been compressed for access by computers using dial-up connection.
+PowerPoint is especially useful when providing course material online.
+Be aware of copyright law when displaying course materials, and properly cite source material. This is especially important when using visuals obtained from the internet or other sources. This also models proper citation for your students.
+Think about message interpretation for PowerPoint use online: will students be able to understand material in a PowerPoint presentation outside of the classroom? Will you need to provide notes and/or other material to help students understand complex information, data, or graphics?
+If you will be using your own laptop, make sure the classroom is equipped with the proper cables, drivers, and other means to display your presentation the way you have intended.
+Slide content
+Avoid text-dense slides. It’s better to have more slides than trying to place too much text on one slide. Use brief points instead of long sentences or paragraphs and outline key points rather than transcribing your lecture. Use PowerPoint to cue and guide the presentation.
+Use the Notes feature to add content to your presentation that the audience will not see. You can access the Notes section for each slide by sliding the bottom of the slide window up to reveal the notes section or by clicking “View” and choosing “Notes Page” from the Presentation Views options.
+Relate PowerPoint material to course objectives to reinforce their purpose for students.
+Number of slides
+As a rule of thumb, plan to show one slide per minute to account for discussion and time and for students to absorb the material.
+Reduce redundant or text-heavy sentences or bullets to ensure a more professional appearance.
+Incorporate active learning throughout the presentation to hold students’ interest and reinforce learning.
+Emphasizing content
+Use italics, bold, and color for emphasizing content.
+Use of a light background (white, beige, yellow) with dark typeface or a dark background (blue, purple, brown) with a light typeface is easy to read in a large room.
+Avoid using too many colors or shifting colors too many times within the presentation, which can be distracting to students.
+Avoid using underlines for emphasis; underlining typically signifies hypertext in digital media.
+Use of a light background with dark typeface or a dark background with a light typeface is easy to read in a large room.
+Typeface
+Limit the number of typeface styles to no more than two per slide. Try to keep typeface consistent throughout your presentation so it does not become a distraction.
+Avoid overly ornate or specialty fonts that may be harder for students to read. Stick to basic fonts so as not to distract students from the content.
+Point size
+Ensure the typeface is large enough to read from anywhere in the room: titles and headings should be no less than 36-40-point font. The subtext should be no less than 32-point font.
+Clip art and graphics
+Use clip art and graphics sparingly. Research shows that it’s best to use graphics only when they support the content. Irrelevant graphics and images have been proven to hinder student learning.
+Photographs can be used to add realism. Again, only use photographs that are relevant to the content and serve a pedagogical purpose. Images for decorative purposes are distracting.
+Size and place graphics appropriately on the slide—consider wrapping text around a graphic.
+Use two-dimensional pie and bar graphs rather than 3D styles which can interfere with the intended message.
+Use clip art and graphics sparingly. Research shows that it’s best to use graphics only when they support the content.
+Animation and sound
+Add motion, sound, or music only when necessary. When in doubt, do without.
+Avoid distracting animations and transitions. Excessive movement within or between slides can interfere with the message and students find them distracting. Avoid them or use only simple screen transitions.
+Final check
+Check for spelling, correct word usage, flow of material, and overall appearance of the presentation.
+Colleagues can be helpful to check your presentation for accuracy and appeal. Note: Errors are more obvious when they are projected.
+Schedule at least one practice session to check for timing and flow.
+PowerPoint’s Slide Sorter View is especially helpful to check slides for proper sequencing as well as information gaps and redundancy. You can also use the preview pane on the left of the screen when you are editing the PowerPoint in “Normal” view.
+Prepare for plan “B” in case you have trouble with the technology in the classroom: how will you provide material located on your flash drive or computer? Have an alternate method of instruction ready (printing a copy of your PowerPoint with notes is one idea).
+PowerPoint’s Slide Sorter View is especially helpful to check slides for proper sequencing and information gaps and redundancy.
+PowerPoint Handouts
+PowerPoint provides multiple options for print-based handouts that can be distributed at various points in the class.
+
+Before class: students might like having materials available to help them prepare and formulate questions before the class period.
+
+During class: you could distribute a handout with three slides and lines for notes to encourage students to take notes on the details of your lecture so they have notes alongside the slide material (and aren’t just taking notes on the slide content).
+
+After class: some instructors wait to make the presentation available after the class period so that students concentrate on the presentation rather than reading ahead on the handout.
+
+Never: Some instructors do not distribute the PowerPoint to students so that students don’t rely on access to the presentation and neglect to pay attention in class as a result.
+
+PowerPoint slides can be printed in the form of handouts—with one, two, three, four, six, or nine slides on a page—that can be given to students for reference during and after the presentation. The three-slides-per-page handout includes lined space to assist in note-taking.
+Notes Pages. Detailed notes can be printed and used during the presentation, or if they are notes intended for students, they can be distributed before the presentation.
+Outline View. PowerPoint presentations can be printed as an outline, which provides all the text from each slide. Outlines offer a welcome alternative to slide handouts and can be modified from the original presentation to provide more or less information than the projected presentation.
+The Presentation
+Alley, Schreiber, Ramsdell, and Muffo (2006) suggest that PowerPoint slide headline design “affects audience retention,” and they conclude that “succinct sentence headlines are more effective” in information recall than headlines of short phrases or single words (p. 233). In other words, create slide titles with as much information as is used for newspapers and journals to help students better understand the content of the slide.
+
+PowerPoint should provide key words, concepts, and images to enhance your presentation (but PowerPoint should not replace you as the presenter).
+Avoid reading from the slide—reading the material can be perceived as though you don’t know the material. If you must read the material, provide it in a handout instead of a projected PowerPoint slide.
+Avoid moving a laser pointer across the slide rapidly. If using a laser pointer, use one with a dot large enough to be seen from all areas of the room and move it slowly and intentionally.
+Avoid reading from the slide—reading the material can be perceived as though you don’t know the material.
+Use a blank screen to allow students to reflect on what has just been discussed or to gain their attention (Press B for a black screen or W for a white screen while delivering your slide show; press these keys again to return to the live presentation). This pause can also be used for a break period or when transitioning to new content.
+Stand to one side of the screen and face the audience while presenting. Using Presenter View will display your slide notes to you on the computer monitor while projecting only the slides to students on the projector screen.
+Leave classroom lights on and turn off lights directly over the projection screen if possible. A completely dark or dim classroom will impede notetaking (and may encourage nap-taking).
+Learn to use PowerPoint efficiently and have a back-up plan in case of technical failure.
+Give yourself enough time to finish the presentation. Trying to rush through slides can give the impression of an unorganized presentation and may be difficult for students to follow or learn.
+PART II: Enhancing Teaching and Learning with PowerPoint
+Class Preparation
+PowerPoint can be used to prepare lectures and presentations by helping instructors refine their material to salient points and content. Class lectures can be typed in outline format, which can then be refined as slides. Lecture notes can be printed as notes pages (notes pages: Printed pages that display author notes beneath the slide that the notes accompany.) and could also be given as handouts to accompany the presentation.
+
+Multimodal Learning
+Using PowerPoint can help you present information in multiple ways (a multimodal approach) through the projection of color, images, and video for the visual mode; sound and music for the auditory mode; text and writing prompts for the reading/writing mode; and interactive slides that ask students to do something, e.g. a group or class activity in which students practice concepts, for the kinesthetic mode (see Part III: Engaging Students with PowerPoint for more details). Providing information in multiple modalities helps improve comprehension and recall for all students.
+
+Providing information in multiple modalities helps improve comprehension and recall for all students.
+Type-on Live Slides
+PowerPoint allows users to type directly during the slide show, which provides another form of interaction. These write-on slides can be used to project students’ comments and ideas for the entire class to see. When the presentation is over, the new material can be saved to the original file and posted electronically. This feature requires advanced preparation in the PowerPoint file while creating your presentation. For instructions on how to set up your type-on slide text box, visit this tutorial from AddictiveTips.  
+
+Write or Highlight on Slides
+PowerPoint also allows users to use tools to highlight or write directly onto a presentation while it is live. When you are presenting your PowerPoint, move your cursor over the slide to reveal tools in the lower-left corner. One of the tools is a pen icon. Click this icon to choose either a laser pointer, pen, or highlighter. You can use your cursor for these options, or you can use the stylus for your smart podium computer monitor or touch-screen laptop monitor (if applicable). 
+
+Just-In-Time Course Material
+You can make your PowerPoint slides, outline, and/or notes pages available online 24/7 through Blackboard, OneDrive, other websites. Students can review the material before class, bring printouts to class, and better prepare themselves for listening rather than taking a lot of notes during the class period. They can also come to class prepared with questions about the material so you can address their comprehension of the concepts.
+
+PART III: Engaging Students with PowerPoint
+The following techniques can be incorporated into PowerPoint presentations to increase interactivity and engagement between students and between students and the instructor. Each technique can be projected as a separate PowerPoint slide.
+
+Running Slide Show as Students Arrive in the Classroom
+This technique provides visual interest and can include a series of questions for students to answer as they sit waiting for class to begin. These questions could be on future texts or quizzes.
+
+Opening Question: project an opening question, e.g. “Take a moment to reflect on ___.”
+Think-Pair-Share can be projected at different intervals of a presentation to allow students to reflect on and discuss with a partner what has been presented.
+Think of what you know about ___.
+Turn to a partner and share your knowledge about ___.
+Share with the class what you have discussed with your partner.
+Focused Listing helps with recall of pertinent information, e.g. “list as many characteristics of ___, or write down as many words related to ___ as you can think of.”
+Brainstorming stretches the mind and promotes deep thinking and recall of prior knowledge, e.g. “What do you know about ___? Start with your clearest thoughts and then move on to those what are kind of ‘out there.’”
+Questions: ask students if they have any questions roughly every 15 minutes. This technique provides time for students to reflect and is also a good time for a scheduled break or for the instructor to interact with students.
+Note Check: ask students to “take a few minutes to compare notes with a partner,” or “…summarize the most important information,” or “…identify and clarify any sticking points,” etc.
+Questions and Answer Pairs: have students “take a minute to come with one question then see if you can stump your partner!”
+The Two-Minute Paper allows the instructor to check the class progress, e.g. “summarize the most important points of today’s lecture.” Have students submit the paper at the end of class.
+“If You Could Ask One Last Question—What Would It Be?” This technique allows for students to think more deeply about the topic and apply what they have learned in a question format.
+A Classroom Opinion Poll provides a sense of where students stand on certain topics, e.g. “do you believe in ___,” or “what are your thoughts on ___?”
+Muddiest Point allows anonymous feedback to inform the instructor if changes and or additions need to be made to the class, e.g. “What parts of today’s material still confuse you?”
+Most Useful Point can tell the instructor where the course is on track, e.g. “What is the most useful point in today’s material, and how can you illustrate its use in a practical setting?”
+POSITIVE FEATURES OF POWERPOINT
+
+PowerPoint saves time and energy—once the presentation has been created, it is easy to update or modify for other courses.
+PowerPoint is portable and can be shared easily with students and colleagues.
+PowerPoint supports multimedia, such as video, audio, images, and
+PowerPoint supports multimedia, such as video, audio, images, and animation.
+Potential Drawbacks of PowerPoint
+PowerPoint could reduce the opportunity for classroom interaction by being the primary method of information dissemination or designed without built-in opportunities for interaction.
+PowerPoint could lead to information overload, especially with the inclusion of long sentences and paragraphs or lecture-heavy presentations with little opportunity for practical application or active learning.
+PowerPoint could “drive” the instruction and minimize the opportunity for spontaneity and creative teaching unless the instructor incorporates the potential for ingenuity into the presentation. 
+Summary
+As with any technology, the way PowerPoint is used will determine its pedagogical effectiveness. By strategically using the points described above, PowerPoint can be used to enhance instruction and engage students.

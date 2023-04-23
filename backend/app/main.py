@@ -172,6 +172,31 @@ chat_history = []
 
 # TODO: post api to upload PDF
 
+# llm2 = OpenAI(temperature=.7)
+# template = """
+# You are a format checker. You are given a text, try to see: 
+# 1. If in the begining, there is the following text:
+
+# --- 
+# marp: true
+# theme: default
+# paginate: true
+# size: 16:9
+
+# (when you check the text, ignore the spaces). If not, add it.
+
+# 2. Convert every ## to #
+
+# 3. If before each single # symbol there is a three dash ---. If not, add it.
+
+# The following is the original text, check and revise if needed, then output the revised text.
+# {output_text}
+
+# Revised text:"""
+
+# TOKEN = 1800
+
+
 @app.get("/")
 async def test(request: Request):
     """test"""
