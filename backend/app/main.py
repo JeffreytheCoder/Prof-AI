@@ -1,6 +1,9 @@
 import os
 import sys
 import time
+import subprocess
+import random
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -68,18 +71,18 @@ async def generate_response(request: Request):
 
     llm = Cohere(cohere_api_key=cohere_api_key, model="command-xlarge-nightly", temperature=2, max_tokens=4096)
     embeddings = CohereEmbeddings(cohere_api_key=cohere_api_key, model="command-xlarge-nightly")
-    
-    #llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=10000)
-    #embeddings = OpenAIEmbeddings(model="gpt-3.5-turbo")
-    
+
+    # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1, max_tokens=10000)
+    # embeddings = OpenAIEmbeddings(model="gpt-3.5-turbo")
+
     chroma = Chroma.from_documents(documents=split_texts, embeddings=embeddings, persist_directory=persist_directory)
-    
+
     # Chain
     chain = load_qa_chain(llm)
     content = chroma.similarity_search(user_input)
     answer = chain.run(input_documents=content, question=user_input)
-    trimmed_answer = answer.replace("\n"," ")
-    
+    trimmed_answer = answer.replace("\n", " ")
+
     # lec1_qa = RetrievalQA.from_chain_type(llm=llm, 
     #                                       chain_type="stuff", 
     #                                       retriever=chroma.as_retriever(), 
@@ -100,7 +103,7 @@ async def generate_response(request: Request):
     #     )
     # ]
     # agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-    
+
     # Response
     # bot_response = lec1_qa.run(user_input)
     created_time = int(time.time())
@@ -112,4 +115,14 @@ async def generate_response(request: Request):
 
     return JSONResponse(content=response_data)
 
+
 # @app.post("/qa")
+@app.post("/convert")
+async def convert_md(file_string):
+    hash = random.getrandbits(128)
+    print("hash value: %032x" % hash)
+    f = open(f"{hash}.md", "w")
+    f.write(file_string)
+    f.close()
+    subprocess.run(["marp", f"{hash}.md", "--pdf", "--theme", "uncover"])
+
