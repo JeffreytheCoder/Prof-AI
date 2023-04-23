@@ -35,8 +35,7 @@ const Slides = () => {
   }
 
   return (
-      <Container fixed>
-        <div className="App" align="center" style={{marginTop:"15vh"}}>
+        <div className="App" align="center" >
           <Document
             file="/test.pdf"
             onLoadSuccess={onDocumentLoadSuccess}>
@@ -56,21 +55,20 @@ const Slides = () => {
               <p>
                 Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
               </p>
-              <IconButton size="large" color="inherit"
+              <IconButton size="large" style={{color:"#5F64FA"}}
                           disabled={pageNumber <= 1} onClick={() => {
                 previousPage();
               }}>
-                <KeyboardArrowLeftRounded />
+                <KeyboardArrowLeftRounded fontSize='large'/>
               </IconButton>
-              <IconButton size="large" color="inherit"
+              <IconButton size="large"  style={{color:"#5F64FA"}}
                           disabled={numPages ? pageNumber >= numPages : true}
                           onClick={nextPage}
               >
-                <KeyboardArrowRightRounded />
+                <KeyboardArrowRightRounded fontSize='large'/>
               </IconButton>
           </Document>
         </div>
-      </Container>
   );
 };
 
