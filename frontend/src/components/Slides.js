@@ -4,28 +4,20 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { Button, IconButton } from "@mui/material";
 import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded }from '@mui/icons-material';
+import "../App.css"
 
-
-const options = {
-  cMapUrl: 'cmaps/',
-  standardFontDataUrl: 'standard_fonts/',
-};
 
 const Slides = () => {
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
   });
 
-  const [numPages, setNumPages] = useState();
+  const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const [file, setFile] = useState('/test.pdf');
-  function onFileChange(event) {
-    const { files } = event.target;
+  const [renderedPageNumber, setRenderedPageNumber] = useState(null);
 
-    if (files && files[0]) {
-      setFile(files[0] || null);
-    }
-  }
+  const isLoading = renderedPageNumber !== pageNumber;
+
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
     setPageNumber(1);
@@ -45,11 +37,21 @@ const Slides = () => {
   return (
     <div className="App" align="center">
           <Document
-            file={file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            options={options}
-          >
-            <Page pageNumber={pageNumber}>
+            file="/test.pdf"
+            onLoadSuccess={onDocumentLoadSuccess}>
+            {isLoading && renderedPageNumber ? (
+                <Page
+                    key={renderedPageNumber}
+                    pageNumber={renderedPageNumber}
+                />
+            ) : null}
+
+            <Page
+                className={`${isLoading ? 'loadingPage' : ''}`}
+                key={pageNumber}
+                pageNumber={pageNumber}
+                onRenderSuccess={() => setRenderedPageNumber(pageNumber)}
+            />
               <p>
                 Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
               </p>
@@ -65,7 +67,6 @@ const Slides = () => {
               >
                 <KeyboardArrowRightRounded />
               </IconButton>
-            </Page>
           </Document>
     </div>
   );
