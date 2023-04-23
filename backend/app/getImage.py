@@ -1,7 +1,8 @@
+import os
+import sys
 import random
 import requests
-import subprocess
-import re
+from dotenv import load_dotenv
 
 
 def convert_md(file_string):
@@ -32,18 +33,23 @@ def get_images_by_keywords(queries):
         res[query] = get_image(query)
     return res
 
-
+# Fetch an image from Google Custom Search API
 def get_image(query):
-    google_key = 'AIzaSyC1vWrV1Fkdiu1vEQMc_cuxb6kSI13Q-i4'
+    load_dotenv()
+    key = os.getenv("GOOGLE_API_KEY")
+    if not key:
+        print("GOOGLE_API_KEY not found in .env file")
+        sys.exit(1)
     pse_id = '86382df91391748a6'
     params = {
         'cx': pse_id,
         'num': '10',
         'q': query,
         'searchType': 'image',
-        'key': google_key
+        'key': key
     }
-    response = requests.get('https://www.googleapis.com/customsearch/v1', params=params)
+    response = requests.get(
+        'https://www.googleapis.com/customsearch/v1', params=params)
     data = response.json()
     res = random.choice(data['items'])
     return res['link']
@@ -174,3 +180,4 @@ Is there anything else you would like to know?
 # Is there anything else you would like to know?
 # ```
 # """)))
+
