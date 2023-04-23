@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 const ROOT_URL = 'http://localhost:8000';
 
@@ -22,6 +22,19 @@ export const BotProvider = (props) => {
   const [uploaded, setUploaded] = useState(false);
   const [slides, setSlides] = useState("");
   const [transcripts, setTranscripts] = useState([]);
+
+  useEffect(() => {
+    const slides = localStorage.getItem('slides');
+    const transcriptsStr = localStorage.getItem('transcripts');
+    const transcripts = transcriptsStr.split("@@@");
+    if (slides) {
+      setSlides(slides);
+    }
+    if (transcripts) {
+      setTranscripts(transcripts);
+    }
+    console.log(slides, transcripts)
+  }, [])
 
   const uploadFile = async (inputFile) => {
     setFile(inputFile);
@@ -54,6 +67,7 @@ export const BotProvider = (props) => {
 
     const json = await res.json();
     setSlides(json.content);
+    localStorage.setItem('slides', json.content.join("@@@"));
 
     return json.content
   };
@@ -69,6 +83,7 @@ export const BotProvider = (props) => {
 
     const json = await res.json();
     setTranscripts(json.content);
+    localStorage.setItem('transcripts', json.content);
 
     return json.content
   };

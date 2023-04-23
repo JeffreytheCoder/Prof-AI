@@ -100,6 +100,7 @@ const Upload = () => {
         onClick={() => train()}
         startIcon={<PsychologyRoundedIcon />}
         disabled={!file}
+        style={{fontWeight: 600}}
       >
         Train
       </Button>
@@ -124,6 +125,7 @@ const Upload = () => {
         onClick={() => goToClassroom()}
         startIcon={<Face2RoundedIcon />}
         disabled={!trained}
+        style={{fontWeight: 600}}
       >
         See your AI professor
       </Button>
