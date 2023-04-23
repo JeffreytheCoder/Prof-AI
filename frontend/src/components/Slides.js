@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import {Button, IconButton, Container, Grid} from "@mui/material";
+import { IconButton, Container, Grid} from "@mui/material";
 import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded }from '@mui/icons-material';
 import Videos from "./Videos";
 import "../App.css"
