@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { Button, IconButton } from "@mui/material";
+import { KeyboardArrowLeftRounded, KeyboardArrowRightRounded }from '@mui/icons-material';
 
-import { PDFDocumentProxy } from 'pdfjs-dist';
 
 const options = {
   cMapUrl: 'cmaps/',
@@ -16,6 +17,7 @@ const Slides = () => {
   });
 
   const [numPages, setNumPages] = useState();
+  const [pageNumber, setPageNumber] = useState(1);
   const [file, setFile] = useState('/test.pdf');
   function onFileChange(event) {
     const { files } = event.target;
@@ -24,32 +26,47 @@ const Slides = () => {
       setFile(files[0] || null);
     }
   }
-  function onDocumentLoadSuccess({ numPages: nextNumPages }) {
-    setNumPages(nextNumPages);
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+    setPageNumber(1);
+  }
+  function changePage(offset) {
+    setPageNumber(prevPageNumber => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
   }
 
   return (
-    <div className="Example">
-      <header>
-        <h1>react-pdf sample page</h1>
-      </header>
-      <div className="Example__container">
-        <div className="Example__container__load">
-          <label htmlFor="file">Load from file:</label>{' '}
-          <input onChange={onFileChange} type="file" />
-        </div>
-        <div className="Example__container__document">
+    <div className="App" align="center">
           <Document
             file={file}
             onLoadSuccess={onDocumentLoadSuccess}
             options={options}
           >
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-            ))}
+            <Page pageNumber={pageNumber}>
+              <p>
+                Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+              </p>
+              <IconButton size="large" color="inherit"
+                          disabled={pageNumber <= 1} onClick={() => {
+                previousPage();
+              }}>
+                <KeyboardArrowLeftRounded />
+              </IconButton>
+              <IconButton size="large" color="inherit"
+                          disabled={numPages ? pageNumber >= numPages : true}
+                          onClick={nextPage}
+              >
+                <KeyboardArrowRightRounded />
+              </IconButton>
+            </Page>
           </Document>
-        </div>
-      </div>
     </div>
   );
 };
