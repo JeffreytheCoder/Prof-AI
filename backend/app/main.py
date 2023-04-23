@@ -3,9 +3,12 @@ import sys
 import time
 from fastapi import FastAPI, File, UploadFile
 import asyncio
-
+import random
+import requests
+import subprocess
+import re
+from dotenv import load_dotenv
 app = FastAPI()
-from flask import Flask, request
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -336,11 +339,59 @@ async def generate_response_for_qa(request: Request):
     return JSONResponse(content=response_data)
 
 
-@app.post("/convert")
-async def convert_md(file_string):
+def convert_md(file_string):
+    replaced_file_string = replace_image_with_url(get_images_by_keywords(find_image_keywords(file_string)), file_string)
     hash = random.getrandbits(128)
     print("hash value: %032x" % hash)
-    f = open(f"{hash}.md", "w")
-    f.write(file_string)
+    f = open(f"../docs/{hash}.md", "w")
+    f.write(replaced_file_string)
     f.close()
-    subprocess.run(["marp", f"{hash}.md", "--pdf", "--theme", "uncover"])
+    subprocess.run(["marp", f"../docs/{hash}.md", "-o", f"../docs/{hash}.pdf"])
+
+
+def replace_image_with_url(res, file_string):
+    for key in res:
+        side = "left"
+        url = res[key][0]
+        if random.randint(0, 1) == 0:
+            side = "right"
+        if res[key][1] > res[key][2]:
+            format_image = f"bg fit {side}:{random.randint(20,40)}%"
+        else:
+            format_image = f"bg fit {side}"
+        file_string = file_string.replace(f"<image> (keyword: {key})", f"![{format_image}]({url})")
+        print(f"{key}: {url}")
+    return file_string
+
+
+def find_image_keywords(file_string):
+    return re.findall(r'<image> \(keyword: (.*?)\)', file_string)
+
+
+def get_images_by_keywords(queries):
+    res = {}
+    for query in queries:
+        res[query] = get_image(query)
+    return res
+
+
+# Fetch an image from Google Custom Search API
+def get_image(query):
+    load_dotenv()
+    key = os.getenv("GOOGLE_API_KEY")
+    if not key:
+        print("GOOGLE_API_KEY not found in .env file")
+        sys.exit(1)
+    pse_id = '86382df91391748a6'
+    params = {
+        'cx': pse_id,
+        'num': '5',
+        'q': query + ' concept explained',
+        'searchType': 'image',
+        'key': key,
+        'imgSize': 'medium',
+    }
+    response = requests.get('https://www.googleapis.com/customsearch/v1', params=params)
+    data = response.json()
+    res = random.choice(data['items'])
+    return res['link'], res['image']['height'], res['image']['width']

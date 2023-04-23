@@ -2,6 +2,8 @@ import os
 import sys
 import random
 import requests
+import subprocess
+import re
 from dotenv import load_dotenv
 
 
@@ -9,16 +11,23 @@ def convert_md(file_string):
     replaced_file_string = replace_image_with_url(get_images_by_keywords(find_image_keywords(file_string)), file_string)
     hash = random.getrandbits(128)
     print("hash value: %032x" % hash)
-    f = open(f"{hash}.md", "w")
+    f = open(f"../docs/{hash}.md", "w")
     f.write(replaced_file_string)
     f.close()
-    subprocess.run(["marp", f"{hash}.md", "--pdf", "--theme", "uncover"])
+    subprocess.run(["marp", f"../docs/{hash}.md", "-o", f"../docs/{hash}.pdf"])
 
 
 def replace_image_with_url(res, file_string):
     for key in res:
-        url = res[key]
-        file_string = file_string.replace(f"<image> (keyword: {key})", f"![bg left]({url})")
+        side = "left"
+        url = res[key][0]
+        if random.randint(0, 1) == 0:
+            side = "right"
+        if res[key][1] > res[key][2]:
+            format_image = f"bg fit {side}:{random.randint(20,40)}%"
+        else:
+            format_image = f"bg fit {side}"
+        file_string = file_string.replace(f"<image> (keyword: {key})", f"![{format_image}]({url})")
         print(f"{key}: {url}")
     return file_string
 
@@ -33,6 +42,7 @@ def get_images_by_keywords(queries):
         res[query] = get_image(query)
     return res
 
+
 # Fetch an image from Google Custom Search API
 def get_image(query):
     load_dotenv()
@@ -43,19 +53,19 @@ def get_image(query):
     pse_id = '86382df91391748a6'
     params = {
         'cx': pse_id,
-        'num': '10',
-        'q': query,
+        'num': '5',
+        'q': query + ' concept explained',
         'searchType': 'image',
-        'key': key
+        'key': key,
+        'imgSize': 'medium',
     }
-    response = requests.get(
-        'https://www.googleapis.com/customsearch/v1', params=params)
+    response = requests.get('https://www.googleapis.com/customsearch/v1', params=params)
     data = response.json()
     res = random.choice(data['items'])
-    return res['link']
+    return res['link'], res['image']['height'], res['image']['width']
 
 
-convert_md("""# Introduction to Linear Regression
+file_test = """# Introduction to Linear Regression
 
 - **Linear regression** is a method used to model the relationship between a dependent variable and one or more independent variables.
 - It assumes that there is a linear relationship between the variables and tries to find the line of best fit that minimizes the sum of squared errors.
@@ -116,7 +126,7 @@ plt.plot(X, y)
 plt.show()
 Is there anything else you would like to know?
 ```
-""")
+"""
 
 # print(get_images_by_keywords(find_image_keywords("""# Introduction to Linear Regression
 #
@@ -181,3 +191,59 @@ Is there anything else you would like to know?
 # ```
 # """)))
 
+file = """# Slide 1: Socket Programming with UDP
+- Processes communicate by sending messages into sockets.
+- UDP packets require a destination address be attached before being sent.
+- Client sends a packet to the server's socket with destination address attached.
+
+<image> (keyword: UDP Socket Programming)
+
+---
+
+# Slide 2: Destination Address in UDP
+- Destination address includes destination host’s IP address and socket's port number.
+- Routers in the Internet use destination IP address to route packet to destination host.
+- Destination socket's port number identifies the particular socket in the destination host.
+
+<image> (keyword: UDP Destination Address)
+
+---
+
+# Slide 3: UDP Client-Server program
+- Client reads a line, sends to server.
+- Server receives data, modifies to uppercase.
+- Server sends modified data to client.
+
+<image> (keyword: UDP program)
+
+---
+
+# Slide 4: Client Side of Application
+- Create clientSocket with a random port number.
+- Client sends message to server with message and destination address with sendto().
+- Client waits for server response.
+
+<image> (keyword: UDP Client Side)
+
+---
+
+# Slide 5: Server Side of Application
+- Bind the port number 12000 to the server’s socket.
+- Waits for client request, receives data from client.
+- Modifies data and sends modified data to client's address.
+
+<image> (keyword: UDP Server Side)
+
+---
+
+# Slide 6: Testing the Application
+- Run UDPClient.py on one host and UDPServer.py on another host.
+- Be sure to provide the proper hostname or IP address of the server in UDPClient.py.
+- Execute UDPServer.py on the server host.
+- Execute UDPClient.py on client host.
+- Try various sentenses and get updated capitalized sentences back.
+
+<image> (keyword: UDP application test)"""
+
+convert_md(file)
+print(get_images_by_keywords(find_image_keywords(file)))
