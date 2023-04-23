@@ -19,7 +19,7 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
     }, []);
 
     const didKey = 'aGFvYm8xMDA4OUBnbWFpbC5jb20:7fGvQp8mX-XEzDMEFP4Ux'; // TESTING
-    // const didKey = 'aGFvYm8xMDA5MUBnbWFpbC5jb20:zsm64eb3blAJ-ZEd_Ds8u'; 
+    // const didKey = 'aGFvYm9zaW1vbkBnbWFpbC5jb20:VZoFX9rvLUcqAZ_RBVitI'; 
     const headers = {
         'Authorization': 'Basic ' + didKey,
         'Accept': 'application/json',
@@ -63,7 +63,7 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
 
     if (pageNum <= videoIds.length) {
         const id = videoIds[pageNum];
-        let interval = setInterval(() => {
+        // let interval = setInterval(() => {
             fetch(url + id, {
                 method: 'GET',
                 headers: headers,
@@ -73,11 +73,11 @@ const Videos = ({ transcripts, pageNum, nextPage }) => {
                     if (data.result_url !== undefined) {
                         setVideoURL(data.result_url);
                         setVideoAvailable(true);
-                        clearInterval(interval);
+                        // clearInterval(interval);
                     }
                 })
                 .catch(err => console.log(err));
-        }, 1000);
+        // }, 1000);
     }
 
 
