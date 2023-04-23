@@ -140,5 +140,6 @@ env
 .idea/
 db/
 
-#file folder
-# files/
+# docs
+input-docs/
+slides/
