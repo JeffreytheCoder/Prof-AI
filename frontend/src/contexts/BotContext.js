@@ -5,7 +5,7 @@ const ROOT_URL = 'http://localhost:8000';
 const initialState = {
   file: new Blob(),
   uploaded: false,
-  slides: new Blob(),
+  slides: "",
   transcripts: [],
 };
 
@@ -20,7 +20,7 @@ export const BotProvider = (props) => {
   const { children } = props;
   const [file, setFile] = useState(new Blob());
   const [uploaded, setUploaded] = useState(false);
-  const [slides, setSlides] = useState(new Blob());
+  const [slides, setSlides] = useState("");
   const [transcripts, setTranscripts] = useState([]);
 
   const uploadFile = async (inputFile) => {
@@ -52,10 +52,10 @@ export const BotProvider = (props) => {
       throw new Error('fileToSlides returned an error');
     }
 
-    const blob = await res.blob();
-    setSlides(blob);
+    const json = await res.json();
+    setSlides(json.content);
 
-    return blob
+    return json.content
   };
 
   const getTranscripts = async () => {
